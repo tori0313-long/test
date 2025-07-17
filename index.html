@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>野球中継スコアボード</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+#scoreboard {
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+#scoreboard th, #scoreboard td {
+  border: 1px solid #000;
+  padding: 4px 8px;
+  text-align: center;
+}
+
+.buttons button {
+  margin: 2px;
+}
+
+#diamond {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+.base {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 4px;
+  cursor: pointer;
+}
+.filled {
+  background-color: #ffd700;
+}
+</style>
+</head>
+<body>
+<h1>野球中継スコアボード</h1>
+<table id="scoreboard">
+  <thead>
+    <tr>
+      <th>チーム</th>
+      <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>R</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr id="away-row">
+      <th>ビジター</th>
+      <td class="score" data-team="away" data-inning="0">0</td>
+      <td class="score" data-team="away" data-inning="1">0</td>
+      <td class="score" data-team="away" data-inning="2">0</td>
+      <td class="score" data-team="away" data-inning="3">0</td>
+      <td class="score" data-team="away" data-inning="4">0</td>
+      <td class="score" data-team="away" data-inning="5">0</td>
+      <td class="score" data-team="away" data-inning="6">0</td>
+      <td class="score" data-team="away" data-inning="7">0</td>
+      <td class="score" data-team="away" data-inning="8">0</td>
+      <td id="away-total">0</td>
+    </tr>
+    <tr id="home-row">
+      <th>ホーム</th>
+      <td class="score" data-team="home" data-inning="0">0</td>
+      <td class="score" data-team="home" data-inning="1">0</td>
+      <td class="score" data-team="home" data-inning="2">0</td>
+      <td class="score" data-team="home" data-inning="3">0</td>
+      <td class="score" data-team="home" data-inning="4">0</td>
+      <td class="score" data-team="home" data-inning="5">0</td>
+      <td class="score" data-team="home" data-inning="6">0</td>
+      <td class="score" data-team="home" data-inning="7">0</td>
+      <td class="score" data-team="home" data-inning="8">0</td>
+      <td id="home-total">0</td>
+    </tr>
+  </tbody>
+</table>
+<div class="buttons">
+  <button onclick="incrementScore('away')">ビジター得点+1</button>
+  <button onclick="incrementScore('home')">ホーム得点+1</button>
+  <button onclick="nextInning()">次の回へ</button>
+</div>
+
+<div>
+  <p>ボール: <span id="balls">0</span> <button onclick="incrementCount('balls')">+</button></p>
+  <p>ストライク: <span id="strikes">0</span> <button onclick="incrementCount('strikes')">+</button></p>
+  <p>アウト: <span id="outs">0</span> <button onclick="incrementCount('outs')">+</button></p>
+</div>
+
+<div id="diamond">
+  <div id="base3" class="base" onclick="toggleBase(3)">三</div>
+  <div id="base2" class="base" onclick="toggleBase(2)">二</div>
+  <div id="base1" class="base" onclick="toggleBase(1)">一</div>
+</div>
+
+<script>
+let currentInning = 0; // 0-8 for innings 1-9
+let balls = 0;
+let strikes = 0;
+let outs = 0;
+
+function incrementScore(team) {
+  const cell = document.querySelector(`.score[data-team="${team}"][data-inning="${currentInning}"]`);
+  cell.textContent = parseInt(cell.textContent) + 1;
+  updateTotals();
+}
+
+function updateTotals() {
+  const awayCells = document.querySelectorAll('#away-row .score');
+  const homeCells = document.querySelectorAll('#home-row .score');
+  let awayTotal = 0;
+  let homeTotal = 0;
+  awayCells.forEach(c => awayTotal += parseInt(c.textContent));
+  homeCells.forEach(c => homeTotal += parseInt(c.textContent));
+  document.getElementById('away-total').textContent = awayTotal;
+  document.getElementById('home-total').textContent = homeTotal;
+}
+
+function nextInning() {
+  if (currentInning < 8) {
+    currentInning++;
+  } else {
+    alert('9回まで終了しました');
+  }
+}
+
+function incrementCount(type) {
+  if (type === 'balls') {
+    balls = (balls + 1) % 4;
+    document.getElementById('balls').textContent = balls;
+  } else if (type === 'strikes') {
+    strikes = (strikes + 1) % 3;
+    document.getElementById('strikes').textContent = strikes;
+  } else if (type === 'outs') {
+    outs = (outs + 1) % 3;
+    document.getElementById('outs').textContent = outs;
+  }
+}
+
+function toggleBase(num) {
+  const base = document.getElementById(`base${num}`);
+  base.classList.toggle('filled');
+}
+</script>
+</body>
+</html>
